@@ -1,6 +1,6 @@
 import math
-from scipy import integrate
 from gray_code_builder import GrayCodeBuilder
+from integral import integral_sum
 
 
 def sign(x):
@@ -34,19 +34,25 @@ def Wal(n, t, T):
         return val
 
 
-def W(t, T, N, x):
+def W(t, T, N, c_memo):
     val = 0
     for n in range(N):
-        val += c(n, t, T, x) * Wal(n, t, T)
+        val += c_memo[n] * Wal(n, t, T)
     return val
 
 
 def get_func(n, x, T):
     # return lambda t: x[int(t)] * Wal(n, t, T)
-    return lambda t: Wal(n, t, T)
+    return lambda t: x(t) * Wal(n, t, T)
 
 
-def c(n, t, T, x):
-    # return integrate.quad(get_func(n, x, T), 0, T) / T
-    return x[t] * integrate.quad(get_func(n, x, T), 0, T) / T
+def c(n, T, x):
+    """
+
+    :param n: номер коэффициента
+    :param T: длина сигнала
+    :param x:
+    :return:
+    """
+    return integral_sum(get_func(n, x, T), 0, T, eps=0.1) / T
 

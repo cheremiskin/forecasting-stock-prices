@@ -2,7 +2,7 @@ def get_new_matrix(n, m):
     matrix = [0] * n
 
     for row in range(n):
-
+        matrix[row] = [0] * m
     return matrix
 
 
@@ -15,7 +15,6 @@ class GrayCodeBuilder:
         self.size_capacity = 2
 
         self.gray_code = [[0], [1]]
-        matrix[row] = [0] * m
 
         self.build(length)
 
@@ -25,7 +24,7 @@ class GrayCodeBuilder:
         self.fill()
 
     def scale(self, new_code_length):
-        """ Сhanges the maximum capacity. """
+        """ Changes the maximum capacity. """
         new_size_capacity = pow(2, new_code_length)
 
         self.gray_code += ([[0] * (new_code_length - self.length)] * (new_size_capacity - self.size_capacity))

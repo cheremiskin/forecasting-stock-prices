@@ -3,7 +3,6 @@ import numpy as np
 
 from walsh_function import Wal, Rad
 
-
 def show_wal():
     T = 1000
     plt.figure(figsize=(14, 7))
@@ -14,7 +13,7 @@ def show_wal():
         w = list(map(lambda ti: Wal(i, ti, T), t))
         plt.subplot(4, 4, i+1)
         plt.plot(t, w)
-        plt.title("W" + str(i))
+        plt.title("Функция Уолша " + str(i) + " порядка")
         # plt.ylabel("w" + str(i), fontsize=14)  # ось ординат
         plt.grid(True)  # включение отображение сетки
 
@@ -22,3 +21,4 @@ def show_wal():
 
 
 show_wal()
+
