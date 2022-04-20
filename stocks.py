@@ -4,14 +4,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from walsh_function import Wal
-from integral import integral, integral_sum
+from Integral import integral, integral_sum
 from format_data import format_data
 from progress_bar import printProgressBar
 
 
 # Данные акции
 # data = yf.download('AAPL', '2020-04-01', '2021-04-01')
-data = yf.download('AAPL', '2010-04-01', '2021-04-01')
+data = yf.download("AAPL", "2010-04-01", "2021-04-01")
 
 stock_time, stock_price = format_data(data)
 price = []

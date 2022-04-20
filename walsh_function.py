@@ -1,6 +1,9 @@
 import math
-from gray_code_builder import GrayCodeBuilder
-from integral import integral_sum
+
+# from GreyCodeBuilder import GrayCodeBuilder
+# from Integral import integral_sum
+import MathUtils
+from GreyCodeBuilder import GreyCodeBuilder
 
 
 def sign(x):
@@ -15,7 +18,7 @@ def Rad(k, teta):
         return 1
     else:
         return sign(math.sin(pow(2, k) * math.pi * teta))
-        
+
 
 def Wal(n, t, T):
     if n == 0:
@@ -27,18 +30,28 @@ def Wal(n, t, T):
         while pow(2, m) <= n:
             m += 1
 
-        GrayCode = GrayCodeBuilder(m)
+        gray_code = GreyCodeBuilder(m).get_code()
         for k in range(m):
-            if GrayCode.gray_code[n][-(k + 1)] == 1:
-                val *= Rad((k + 1), t/T)
+            if gray_code[n][-(k + 1)] == 1:
+                val *= Rad((k + 1), t / T)
         return val
 
 
-def W(t, T, N, c_memo):
-    val = 0
-    for n in range(N):
-        val += c_memo[n] * Wal(n, t, T)
-    return val
+# def W(t, T, N, c_memo):
+#     val = 0
+#     for n in range(N):
+#         val += c_memo[n] * MathUtils.Walsh(n, t, T)
+#         # val += c_memo[n] * Wal(n, t, T)
+#     return val
+
+
+def W(t, T, N, c_memo, w_t, last_n_t):
+    print(w_t, last_n_t)
+
+    for n in range(last_n_t[t], N):
+        w_t[t] += c_memo[n] * MathUtils.Walsh(n, t, T)
+        # val += c_memo[n] * Wal(n, t, T)
+    return w_t[t], w_t, last_n_t
 
 
 def get_func(n, x, T):
@@ -54,5 +67,4 @@ def c(n, T, x):
     :param x:
     :return:
     """
-    return integral_sum(get_func(n, x, T), 0, T, eps=0.1) / T
-
+    return MathUtils.integral(get_func(n, x, T), 0, T) / T
