@@ -1,7 +1,6 @@
 import math
 from typing import Callable
-
-from GreyCodeBuilder import GreyCodeBuilder
+from GrayCodeBuilder import GrayCodeBuilder
 
 
 def sign(x: float):
@@ -11,30 +10,30 @@ def sign(x: float):
         return x / abs(x)
 
 
-def Rad(k, t):
-    """Функция Радемахера"""
-    if k == 0 or t == 0:
-        return 1
-    else:
-        return sign(math.sin(pow(2, k) * math.pi * t))
+def Rad(n: int, t: float):
+    """Rademacher function r_n(t)"""
+    assert n >= 0, "n ∈ N"
+    assert 0 <= t <= 1, "t ∈ [0, 1]"
+
+    return sign(math.sin(pow(2, n) * math.pi * t))
 
 
-def Walsh(n, t, T):
-    """Функция Уолша"""
+def Walsh(n: int, t: float, gray_code_builder: GrayCodeBuilder):
+    """Walsh function"""
+    assert n >= 0, "n ∈ N"
+    assert 0 <= t <= 1, "t ∈ [0, 1]"
+
     result = 1
-
     if n == 0:
         return result
 
-    m = 0
-    while pow(2, m) <= n:
-        m += 1
-
-    grey_code = GreyCodeBuilder(m).get_code()
+    m = math.ceil(math.log2(n))
+    gray_code = gray_code_builder.get_code()
 
     for k in range(m):
-        if grey_code[n][-(k + 1)] == 1:
-            result *= Rad((k + 1), t / T)
+        if gray_code[n][-(k + 1)] == 1:
+            result *= Rad((k + 1), t)
+
     return result
 
 
@@ -55,10 +54,10 @@ def integral(f: Callable[[float], float], a: float, b: float, n: int = 100):
 def standard_deviation(
     values: Callable[[float], float],
     approximate_values: Callable[[float], float],
-    n: int,
+    period: int,
 ):
     sd = 0
-    for i in range(n):
+    for i in range(period):
         sd += pow(values(i) - approximate_values(i), 2)
 
-    return math.sqrt(sd / n)
+    return math.sqrt(sd / period)

@@ -9,11 +9,11 @@ class TestMathUtils(unittest.TestCase):
         self.assertEqual(MathUtils.sign(5), 1)
 
     def test_Rad(self):
-        self.assertEqual(MathUtils.Rad(k=0, t=0), 1)
-        self.assertEqual(MathUtils.Rad(k=1, t=0.3), 1)
-        self.assertEqual(MathUtils.Rad(k=1, t=0.6), -1)
-        self.assertEqual(MathUtils.Rad(k=2, t=0.3), -1)
-        self.assertEqual(MathUtils.Rad(k=2, t=0.6), 1)
+        self.assertEqual(MathUtils.Rad(n=0, t=0), 1)
+        self.assertEqual(MathUtils.Rad(n=1, t=0.3), 1)
+        self.assertEqual(MathUtils.Rad(n=1, t=0.6), -1)
+        self.assertEqual(MathUtils.Rad(n=2, t=0.3), -1)
+        self.assertEqual(MathUtils.Rad(n=2, t=0.6), 1)
 
     def test_Walsh(self):
         self.assertEqual(MathUtils.Walsh(n=0, t=1, T=1), 1)

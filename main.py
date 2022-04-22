@@ -1,9 +1,9 @@
-import MathUtils
-from DataLoader import DataLoader
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from StaticalModel import StaticalModel
+import MathUtils
+from DataLoader import DataLoader
+from ForecastingMethods.WalshForecast import WalshForecasting
 
 
 def data_formatter(data: pd.DataFrame):
@@ -25,7 +25,11 @@ if __name__ == "__main__":
         end_period=default_data["end_period"],
     )
 
+    # print(MathUtils.Walsh(5, 0.1))
+
     stock_data: pd.DataFrame = data_loader.get_data(data_formatter=data_formatter)
 
-    model = StaticalModel(stock_data)
-    print(model.create_statical_model())
+    plt.plot(stock_data)
+    plt.plot(WalshForecasting(stock_data).forecast())
+
+    plt.show()
