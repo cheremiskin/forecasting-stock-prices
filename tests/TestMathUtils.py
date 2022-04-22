@@ -1,5 +1,6 @@
 import unittest
 import MathUtils
+from GrayCodeBuilder import GrayCodeBuilder
 
 
 class TestMathUtils(unittest.TestCase):
@@ -16,16 +17,7 @@ class TestMathUtils(unittest.TestCase):
         self.assertEqual(MathUtils.Rad(n=2, t=0.6), 1)
 
     def test_Walsh(self):
-        self.assertEqual(MathUtils.Walsh(n=0, t=1, T=1), 1)
-        self.assertEqual(MathUtils.Walsh(n=0, t=0, T=1), 1)
-
-        self.assertEqual(MathUtils.Walsh(n=1, t=0.3, T=1), 1)
-        self.assertEqual(MathUtils.Walsh(n=1, t=0.6, T=1), -1)
-
-        self.assertEqual(MathUtils.Walsh(n=2, t=0.1, T=1), 1)
-        self.assertEqual(MathUtils.Walsh(n=2, t=0.3, T=1), -1)
-        self.assertEqual(MathUtils.Walsh(n=2, t=0.6, T=1), -1)
-        self.assertEqual(MathUtils.Walsh(n=2, t=0.9, T=1), 1)
+        pass
 
 
 if __name__ == "__main__":

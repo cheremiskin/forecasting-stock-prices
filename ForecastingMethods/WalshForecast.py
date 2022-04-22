@@ -58,6 +58,8 @@ class WalshForecasting(ForecastMethodInterface):
                 / self.T
             )
 
+        print(self.walsh_coefficients)
+
     def calculate_statical_model(self):
         self.statical_models = [[]] * self.max_num_walsh_func
 
