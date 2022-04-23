@@ -18,6 +18,22 @@ def Rad(n: int, t: float):
     return sign(math.sin(pow(2, n) * math.pi * t))
 
 
+def WalshCoefficient(
+    x: Callable[[float], float], n: int, gray_code_builder: GrayCodeBuilder, T: int
+):
+    def func(t: float):
+        return x(t) * Walsh(n=n, t=t / T, gray_code_builder=gray_code_builder)
+
+    return integral(f=func, a=0, b=T, n=T) / T
+
+
+def get_m(n: int):
+    m = 0
+    while pow(2, m) <= n:
+        m += 1
+    return m
+
+
 def Walsh(n: int, t: float, gray_code_builder: GrayCodeBuilder):
     """Walsh function"""
     assert n >= 0, "n ∈ N"
@@ -27,7 +43,9 @@ def Walsh(n: int, t: float, gray_code_builder: GrayCodeBuilder):
     if n == 0:
         return result
 
-    m = math.ceil(math.log2(n))
+    m = get_m(n)
+    # m = math.ceil(math.log2(n)) + 1
+
     gray_code = gray_code_builder.get_code()
 
     for k in range(m):

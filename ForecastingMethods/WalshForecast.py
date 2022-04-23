@@ -26,7 +26,7 @@ class WalshForecasting(ForecastMethodInterface):
     def __init__(
         self,
         data: pd.DataFrame,
-        min_num_walsh_func: int = 1,
+        min_num_walsh_func: int = 10,
         max_num_walsh_func: int = 400,
     ):
         super().__init__(data)
@@ -38,24 +38,18 @@ class WalshForecasting(ForecastMethodInterface):
         self.get_value = lambda x: data["Value"][math.floor(x)]
 
     def generate_gray_code(self):
-        m = math.ceil(math.log2(self.max_num_walsh_func))
+        m = MathUtils.get_m(self.max_num_walsh_func)
         self.gray_code_builder = GrayCodeBuilder(m)
 
     def calculate_walsh_coefficients(self):
         self.walsh_coefficients = [0] * self.max_num_walsh_func
 
         for n in range(self.max_num_walsh_func):
-            self.walsh_coefficients[n] = (
-                MathUtils.integral(
-                    f=lambda t: self.get_value(t)
-                    * MathUtils.Walsh(
-                        n=n, t=t / self.T, gray_code_builder=self.gray_code_builder
-                    ),
-                    a=0,
-                    b=self.T,
-                    n=self.T,
-                )
-                / self.T
+            self.walsh_coefficients[n] = MathUtils.WalshCoefficient(
+                x=self.get_value,
+                n=n,
+                gray_code_builder=self.gray_code_builder,
+                T=self.T,
             )
 
         print(self.walsh_coefficients)
@@ -101,6 +95,9 @@ class WalshForecasting(ForecastMethodInterface):
         print(self.opt_num_of_walsh_func)
 
         approximate_data = self.data
-        approximate_data["Value"] = self.statical_models[self.opt_num_of_walsh_func]
+        m = []
+        for i in range(len(self.statical_models[self.opt_num_of_walsh_func])):
+            m.append(self.statical_models[self.opt_num_of_walsh_func][i] - 10)
+        approximate_data["Value"] = m
 
         return approximate_data
