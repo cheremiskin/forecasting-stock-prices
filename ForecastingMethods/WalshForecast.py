@@ -26,7 +26,7 @@ class WalshForecasting(ForecastMethodInterface):
     def __init__(
         self,
         data: pd.DataFrame,
-        min_num_walsh_func: int = 10,
+        min_num_walsh_func: int = 1,
         max_num_walsh_func: int = 400,
     ):
         super().__init__(data)
@@ -51,8 +51,6 @@ class WalshForecasting(ForecastMethodInterface):
                 gray_code_builder=self.gray_code_builder,
                 T=self.T,
             )
-
-        print(self.walsh_coefficients)
 
     def calculate_statical_model(self):
         self.statical_models = [[]] * self.max_num_walsh_func
@@ -95,9 +93,6 @@ class WalshForecasting(ForecastMethodInterface):
         print(self.opt_num_of_walsh_func)
 
         approximate_data = self.data
-        m = []
-        for i in range(len(self.statical_models[self.opt_num_of_walsh_func])):
-            m.append(self.statical_models[self.opt_num_of_walsh_func][i] - 10)
-        approximate_data["Value"] = m
+        approximate_data["Value"] = self.statical_models[self.opt_num_of_walsh_func]
 
         return approximate_data

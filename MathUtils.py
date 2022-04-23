@@ -66,6 +66,7 @@ def integral(f: Callable[[float], float], a: float, b: float, n: int = 100):
         result += f(a + h * (i + 0.5))
 
     result *= h
+
     return result
 
 
