@@ -1,13 +1,8 @@
-import math
-
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 
-import MathUtils
 from DataLoader import DataLoader
 from ForecastingMethods.WalshForecast import WalshForecasting
-from GrayCodeBuilder import GrayCodeBuilder
 
 
 def data_formatter(data: pd.DataFrame):
@@ -35,5 +30,3 @@ if __name__ == "__main__":
     plt.plot(WalshForecasting(stock_data).forecast())
 
     plt.show()
-
-    # show_wal()

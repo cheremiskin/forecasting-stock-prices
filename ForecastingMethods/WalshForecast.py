@@ -11,17 +11,18 @@ from GrayCodeBuilder import GrayCodeBuilder
 class WalshForecasting(ForecastMethodInterface):
     gray_code_builder: GrayCodeBuilder
 
+    # Restrictions on the number of Walsh functions in the system
     max_num_walsh_func: int
     min_num_walsh_func: int
 
-    opt_num_of_walsh_func: int
-    minimal_mse: float
+    opt_num_of_walsh_func: int  # Optimal number of Walsh functions in the system
+    minimal_mse: float  # Minimal mean squared error
 
     statical_models: list[list[float]]
     walsh_coefficients: list[float]
 
-    T: int
-    get_value: Callable[[float], float]
+    T: int  # Signal length
+    get_value: Callable[[float], float]  # Function to get the values of the signal
 
     def __init__(
         self,
@@ -38,7 +39,7 @@ class WalshForecasting(ForecastMethodInterface):
         self.get_value = lambda x: data["Value"][math.floor(x)]
 
     def generate_gray_code(self):
-        m = MathUtils.get_m(self.max_num_walsh_func)
+        m = MathUtils.get_pow_of_2_greater_number(self.max_num_walsh_func)
         self.gray_code_builder = GrayCodeBuilder(m)
 
     def calculate_walsh_coefficients(self):
@@ -89,8 +90,6 @@ class WalshForecasting(ForecastMethodInterface):
         self.calculate_walsh_coefficients()
         self.calculate_statical_model()
         self.choose_optimal_num_walsh()
-
-        print(self.opt_num_of_walsh_func)
 
         approximate_data = self.data
         approximate_data["Value"] = self.statical_models[self.opt_num_of_walsh_func]

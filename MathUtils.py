@@ -27,7 +27,7 @@ def WalshCoefficient(
     return integral(f=func, a=0, b=T, n=T) / T
 
 
-def get_m(n: int):
+def get_pow_of_2_greater_number(n: int):
     m = 0
     while pow(2, m) <= n:
         m += 1
@@ -43,8 +43,7 @@ def Walsh(n: int, t: float, gray_code_builder: GrayCodeBuilder):
     if n == 0:
         return result
 
-    m = get_m(n)
-    # m = math.ceil(math.log2(n)) + 1
+    m = get_pow_of_2_greater_number(n)
 
     gray_code = gray_code_builder.get_code()
 
@@ -57,7 +56,7 @@ def Walsh(n: int, t: float, gray_code_builder: GrayCodeBuilder):
 
 def integral(f: Callable[[float], float], a: float, b: float, n: int = 100):
     """
-    Вычисление интеграла по методу средних прямоугольников
+    Calculation of the integral by the method of rectangles
     """
     result: float = 0
     h: float = (b - a) / n
@@ -68,15 +67,3 @@ def integral(f: Callable[[float], float], a: float, b: float, n: int = 100):
     result *= h
 
     return result
-
-
-def standard_deviation(
-    values: Callable[[float], float],
-    approximate_values: Callable[[float], float],
-    period: int,
-):
-    sd = 0
-    for i in range(period):
-        sd += pow(values(i) - approximate_values(i), 2)
-
-    return math.sqrt(sd / period)
