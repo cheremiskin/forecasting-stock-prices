@@ -1,8 +1,8 @@
 from ApproximateModels.StaticalModelUsingWalshFunc import StaticalModelUsingWalshFunc
-from ForecastingMethods.Forecast import ForecastMethodInterface
+from ForecastingMethods.ForecastingModel import ForecastingModelInterface
 
 
-class MarkovChain(ForecastMethodInterface):
+class MarkovChain(ForecastingModelInterface):
     levels: list[float] = []
     increments: list[float] = []
     increments_range: float
@@ -29,6 +29,9 @@ class MarkovChain(ForecastMethodInterface):
         self.fill_transition_count_matrix()
         self.fill_counts_transition_from_segment()
         self.fill_transition_probability_matrix()
+
+        for i in self.transition_probability_matrix:
+            print(i)
 
     def calculate_walsh_levels(self):
         # Если уровни одинаковые подряд ?????
@@ -112,33 +115,16 @@ class MarkovChain(ForecastMethodInterface):
                     target
                 ] = self.get_transition_probability(source, target)
 
-    def forecast(self) -> list[float]:
-        for i in self.transition_probability_matrix:
-            print(i)
-
-        # plt.plot(self.increments)
-        # for i in self.inf_segment:
-        #     plt.plot(list(map(lambda x: i, self.increments)))
-        # plt.show()
-
-        print(self.inf_segment)
+    def forecast(self, last_values=None) -> list[float]:
         predicted = []
+        last_values = last_values if last_values is not None else self.data
 
-        last = self.data[-1]
-        min_inc = max_inc = 0
+        last_inc = last_values[-1] - self.data[-2]
+        last_value = last_values[-1]
 
-        for i in range(10):
-            last_segment = self.get_segment_number(last)
-            forecast_inc = self.forecast_next_increment(last_segment)
+        last_segment = self.get_segment_number(last_inc)
 
-            if forecast_inc <= 0:
-                min_inc += 1
-            else:
-                max_inc += 1
+        forecast_inc = self.forecast_next_increment(last_segment)
+        predicted.append(last_value + forecast_inc)
 
-            predicted.append(last + forecast_inc)
-            last = predicted[-1]
-
-        print(min_inc, max_inc)
-
-        return self.data + predicted
+        return predicted

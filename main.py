@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 from DataLoader import DataLoader
 from ForecastingMethods.MarkovChain import MarkovChain
+from PerformanceEvaluationForecastingModel import PerformanceEvaluationForecastingModel
 
 
 def data_formatter(data: pd.DataFrame):
@@ -28,14 +29,17 @@ if __name__ == "__main__":
 
     stock_data: pd.DataFrame = data_loader.get_data(data_formatter=data_formatter)
 
-    # WalshForecasting(stock_data["Value"][:-10].tolist()).forecast(),
-
-    plt.grid()
-    plt.plot(stock_data["Value"].tolist(), label="Original")
-    plt.plot(
-        MarkovChain(stock_data["Value"][:-10].tolist()).forecast(),
-        label="Forecast",
+    PerformanceEvaluationForecastingModel(
+        model=MarkovChain, data=stock_data["Value"].tolist()
     )
-    plt.legend()
 
-    plt.show()
+    # plt.grid()
+    #
+    # plt.plot(stock_data["Value"].tolist(), label="Original")
+    # plt.plot(
+    #     MarkovChain(stock_data["Value"][:-10].tolist()).forecast(),
+    #     label="Forecast",
+    # )
+    # plt.legend()
+    #
+    # plt.show()
