@@ -1,14 +1,13 @@
 import math
 from typing import Callable
-import pandas as pd
+
 from sklearn.metrics import mean_squared_error
 
 import MathUtils
-from ForecastingMethods.Forecast import ForecastMethodInterface
 from GrayCodeBuilder import GrayCodeBuilder
 
 
-class WalshForecasting(ForecastMethodInterface):
+class StaticalModelUsingWalshFunc:
     gray_code_builder: GrayCodeBuilder
 
     # Restrictions on the number of Walsh functions in the system
@@ -26,17 +25,17 @@ class WalshForecasting(ForecastMethodInterface):
 
     def __init__(
         self,
-        data: pd.DataFrame,
+        data: list[float],
         min_num_walsh_func: int = 1,
         max_num_walsh_func: int = 400,
     ):
-        super().__init__(data)
+        self.data = data
 
         self.min_num_walsh_func = min_num_walsh_func
         self.max_num_walsh_func = max_num_walsh_func
 
         self.T = len(data)
-        self.get_value = lambda x: data["Value"][math.floor(x)]
+        self.get_value = lambda x: data[math.floor(x)]
 
     def generate_gray_code(self):
         m = MathUtils.get_pow_of_2_greater_number(self.max_num_walsh_func)
@@ -73,25 +72,20 @@ class WalshForecasting(ForecastMethodInterface):
     def choose_optimal_num_walsh(self):
         self.opt_num_of_walsh_func = self.min_num_walsh_func
         self.minimal_mse = mean_squared_error(
-            self.data["Value"].tolist(),
+            self.data,
             self.statical_models[self.min_num_walsh_func],
         )
 
         for n in range(self.min_num_walsh_func + 1, self.max_num_walsh_func):
-            mse = mean_squared_error(
-                self.data["Value"].tolist(), self.statical_models[n]
-            )
+            mse = mean_squared_error(self.data, self.statical_models[n])
             if mse < self.minimal_mse:
                 self.minimal_mse = mse
                 self.opt_num_of_walsh_func = n
 
-    def forecast(self) -> pd.DataFrame:
+    def get_model(self) -> list[float]:
         self.generate_gray_code()
         self.calculate_walsh_coefficients()
         self.calculate_statical_model()
         self.choose_optimal_num_walsh()
 
-        approximate_data = self.data
-        approximate_data["Value"] = self.statical_models[self.opt_num_of_walsh_func]
-
-        return approximate_data
+        return self.statical_models[self.opt_num_of_walsh_func]
