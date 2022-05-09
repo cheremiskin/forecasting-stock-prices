@@ -1,9 +1,9 @@
 import pandas as pd
-import matplotlib.pyplot as plt
+import numpy as np
 
 from DataLoader import DataLoader
-from ForecastingMethods.MarkovChain import MarkovChain
-from PerformanceEvaluationForecastingModel import PerformanceEvaluationForecastingModel
+from Plot import Plot
+from StationarityMethods.KPSSStationarity import KPSSStationarity
 
 
 def data_formatter(data: pd.DataFrame):
@@ -15,7 +15,7 @@ def data_formatter(data: pd.DataFrame):
 
 if __name__ == "__main__":
     default_data = {
-        "ticker": "T",
+        "ticker": "F",
         "start_period": "2000-04-01",
         # "start_period": "2020-04-01",
         "end_period": "2021-03-01",
@@ -29,9 +29,22 @@ if __name__ == "__main__":
 
     stock_data: pd.DataFrame = data_loader.get_data(data_formatter=data_formatter)
 
-    PerformanceEvaluationForecastingModel(
-        model=MarkovChain, data=stock_data["Value"].tolist()
-    )
+    np.random.seed(1)
+
+    # create time series data
+    data = np.random.normal(size=100)
+
+    Plot().plot(data)
+    Plot().plot(stock_data["Value"].tolist())
+
+    print(KPSSStationarity.isStationarity(list(data)))
+    print(KPSSStationarity.isStationarity(stock_data["Value"].tolist()))
+
+    Plot().show()
+
+    # PerformanceEvaluationForecastingModel(
+    #     model=MarkovChain, data=stock_data["Value"].tolist()
+    # )
 
     # plt.grid()
     #

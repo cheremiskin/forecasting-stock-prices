@@ -55,5 +55,6 @@ class PerformanceEvaluationForecastingModel:
 
         plt.plot(self.train_set + self.forecast, label="Forecast")
         plt.plot(self.train_set + self.validation_set, label="Original")
+
         plt.legend()
         plt.show()
