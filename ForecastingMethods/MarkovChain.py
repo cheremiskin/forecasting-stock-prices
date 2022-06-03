@@ -32,22 +32,6 @@ class MarkovChain(ForecastingModelInterface):
         self.fill_counts_transition_from_segment()
         self.fill_transition_probability_matrix()
 
-        # fig, axs = plt.subplots(2, 1)
-        # axs[0].plot(self.levels)
-        # axs[1].plot([0.0] + self.increments)
-        # for i in self.inf_segment:
-        #     axs[1].plot(list(map(lambda x: i, self.levels)), label=i)
-        #
-        # plt.legend()
-        # plt.show()
-
-        # for i in range(self.num_of_segments):
-        #     self.forecast_next_increment(i)
-        #
-        # print()
-        # print()
-        # print()
-
     def calculate_walsh_levels(self):
         # Если уровни одинаковые подряд ?????
         prev = -1
@@ -112,20 +96,10 @@ class MarkovChain(ForecastingModelInterface):
 
     def forecast_next_increment(self, current_segment):
         probabilities = self.transition_probability_matrix[current_segment]
-        # print("probabilities", probabilities)
         inc = 0
 
         for i in range(len(probabilities)):
             inc += probabilities[i] * (self.inf_segment[i] + self.size_of_segment / 2)
-            if probabilities[i] > 0:
-                print(
-                    probabilities[i],
-                    "*",
-                    round(self.inf_segment[i] + self.size_of_segment / 2, 1),
-                    end=" + ",
-                )
-
-        print("=", round(inc, 1))
 
         return inc
 
