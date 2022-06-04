@@ -1,20 +1,13 @@
 import warnings
 
+from sklearn.metrics import mean_squared_error
+
 from ForecastingMethods.ForecastingModel import ForecastingModelInterface
+from MathUtils import least_square_method
 from Plot import Plot
 from StationarityMethods.KPSSStationarity import KPSSStationarity
 import pandas as pd
 import numpy as np
-
-
-def least_square_method(A, b):
-    A, b = np.array(A), np.array(b)
-    try:
-        x = np.linalg.inv(A.T.dot(A)).dot(A.T).dot(b)
-    except np.linalg.LinAlgError:
-        x = np.linalg.pinv(A).dot(b)
-    finally:
-        return x
 
 
 class ARIMA:
@@ -56,7 +49,7 @@ class ARIMA:
 
         for i in range(num_rows):
             for j in range(num_cols):
-                matrix[i][j] = data[-j - i - 1]
+                matrix[i][j] = data[-j - i]
 
         return matrix
 
@@ -93,15 +86,17 @@ class ARIMA:
         )
 
 
-class BoxJenkinsMethod:
-    def __init__(self, series: list[float], max_d=5, max_p=5, max_q=5):
-        self.series = series
+class BoxJenkinsMethod(ForecastingModelInterface):
+    def __init__(self, data: list[float], max_d=5, max_p=5, max_q=5):
+        self.series = data
 
         self.max_d = max_d
         self.max_p = max_p
         self.max_q = max_q
 
         self.d = 0
+        self.p = 0
+        self.q = 0
 
         self.aic_matrix = [[]] * max_q
         for i in range(max_q):
@@ -123,9 +118,19 @@ class BoxJenkinsMethod:
 
         return self.d
 
-    def calculate_aic_matrix(self):
-        for q in range(self.max_q):
-            for p in range(self.max_p):
+    def fit(self):
+        min_mse = 2000000000
+
+        pp = -1
+        qq = -1
+
+        # forecast = []
+
+        # train_data = self.series[: round(len(self.series) * 0.9)]
+        # test_data = self.series[len(train_data) :]
+
+        for p in range(5):
+            for q in range(5):
                 print("p:", p, ", q:", q)
                 if p < 1 or q < 1:
                     continue
@@ -136,7 +141,7 @@ class BoxJenkinsMethod:
                 last_data = train_data.copy()
 
                 for i in test_data:
-                    forecast_data.append(ARIMA(p, 1, q, last_data).forecast())
+                    forecast_data.append(ARIMA(p, self.d, q, last_data).forecast())
                     last_data.append(i)
 
                 mse = mean_squared_error(forecast_data, test_data)
@@ -145,3 +150,9 @@ class BoxJenkinsMethod:
                     pp = p
                     qq = q
                     forecast = forecast_data
+
+        self.p = pp
+        self.q = qq
+
+    def forecast(self, last_values: list[float] = None) -> list[float]:
+        return [ARIMA(self.p, self.d, self.q, series=last_values).forecast()]

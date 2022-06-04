@@ -1,6 +1,7 @@
 import math
 from typing import Callable
 from GrayCodeBuilder import GrayCodeBuilder
+import numpy as np
 
 
 def sign(x: float):
@@ -32,6 +33,16 @@ def get_pow_of_2_greater_number(n: int):
     while pow(2, m) <= n:
         m += 1
     return m
+
+
+def least_square_method(A, b):
+    A, b = np.array(A), np.array(b)
+    try:
+        x = np.linalg.inv(A.T.dot(A)).dot(A.T).dot(b)
+    except np.linalg.LinAlgError:
+        x = np.linalg.pinv(A).dot(b)
+    finally:
+        return x
 
 
 def Walsh(n: int, t: float, gray_code_builder: GrayCodeBuilder):

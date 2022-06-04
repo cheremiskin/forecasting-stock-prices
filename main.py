@@ -1,9 +1,15 @@
+import math
+from random import random
+
 import pandas as pd
 import numpy as np
 from sklearn.metrics import mean_squared_error
 
 from DataLoader import DataLoader
 from ForecastingMethods.ARIMA import BoxJenkinsMethod, ARIMA
+from ForecastingMethods.HoltWinters import HoltWintersForecast
+from ForecastingMethods.MarkovChain import MarkovChain
+from PerformanceEvaluationForecastingModel import PerformanceEvaluationForecastingModel
 from Plot import Plot
 import matplotlib.pyplot as plt
 from StationarityMethods.KPSSStationarity import KPSSStationarity
@@ -50,82 +56,85 @@ def least_square_method(x, y):
         return b
 
 
+def show_trend():
+    values = [x * 0.7 + random() ** 2 * 10 for x in range(100)]
+    print(values)
+    plt.plot(values, label="Seasonality")
+    plt.plot([x * 0.7 for x in range(100)])
+    plt.show()
+
+
+def show_noise():
+    noise = np.random.randn(250) * 100
+    plt.plot(noise)
+    plt.show()
+
+
+def show_seasonality():
+    time = np.arange(50)
+    values = np.where(time < 10, time**3, (time - 9) ** 2)
+    # Repeat the pattern 5 times
+    seasonal = []
+    for i in range(5):
+        for j in range(50):
+            seasonal.append(values[j])
+    # Plot
+    noise = np.random.randn(250) * 100
+    seasonal += noise
+    time_seasonal = np.arange(250)
+    plt.plot(time_seasonal, seasonal, label="Seasonality")
+    plt.show()
+
+
 if __name__ == "__main__":
-    default_data = {
-        "ticker": "F",
-        "start_period": "2000-04-01",
-        # "start_period": "2020-04-01",
-        "end_period": "2021-03-01",
-    }
+    test_data = [
+        {
+            "ticker": "SBUX",
+            "start_period": "2015-04-01",
+            "end_period": "2018-09-01",
+        },
+        {
+            "ticker": "AAPL",
+            "start_period": "2010-04-01",
+            "end_period": "2021-09-01",
+        },
+        {
+            "ticker": "GE",
+            "start_period": "2013-04-01",
+            "end_period": "2016-09-01",
+        },
+        {
+            "ticker": "GAZP.ME",
+            "start_period": "2015-04-01",
+            "end_period": "2020-04-01",
+        },
+    ]
 
-    data_loader = DataLoader(
-        ticker=default_data["ticker"],
-        start_period=default_data["start_period"],
-        end_period=default_data["end_period"],
-    )
+    show_trend()
 
-    stock_data: pd.DataFrame = data_loader.get_data(data_formatter=data_formatter)
-    stock_data_list = stock_data["Value"].tolist()
-
-    min_mse = 2000000000
-
-    pp = -1
-    qq = -1
-
-    forecast = []
-
-    train_data = stock_data_list[: round(len(stock_data_list) * 0.9)]
-    test_data = stock_data_list[len(train_data) :]
-
-    for p in range(5):
-        for q in range(5):
-            print("p:", p, ", q:", q)
-            if p < 1 or q < 1:
-                continue
-            train_data = stock_data_list[: round(len(stock_data_list) * 0.9)]
-            test_data = stock_data_list[len(train_data) :]
-
-            forecast_data = []
-            last_data = train_data.copy()
-
-            for i in test_data:
-                forecast_data.append(ARIMA(p, 1, q, last_data).forecast())
-                last_data.append(i)
-
-            mse = mean_squared_error(forecast_data, test_data)
-            if mse < min_mse:
-                min_mse = mse
-                pp = p
-                qq = q
-                forecast = forecast_data
-
-    print(min_mse, pp, qq)
-
-    # Plot().plot(stock_data_list)
-    # Plot().plot(train_data)
+    # fig, axs = plt.subplots(2, 2)
+    # for i in range(len(test_data)):
+    #     default_data = test_data[i]
     #
-    # Plot().show()
-
-    plt.plot(test_data)
-    plt.plot(forecast)
-
-    # print(lag_data(_data, 2))
-    # print(_data)
-
-    # bj = BoxJenkinsMethod(stock_data["Value"].tolist())
-    # print(bj.calculate_d())
-
-    # PerformanceEvaluationForecastingModel(
-    #     model=MarkovChain, data=stock_data["Value"].tolist()
-    # )
-
-    # plt.grid()
+    #     data_loader = DataLoader(
+    #         ticker=default_data["ticker"],
+    #         start_period=default_data["start_period"],
+    #         end_period=default_data["end_period"],
+    #     )
     #
-    # plt.plot(stock_data["Value"].tolist(), label="Original")
-    # plt.plot(
-    #     MarkovChain(stock_data["Value"][:-10].tolist()).forecast(),
-    #     label="Forecast",
-    # )
-    # plt.legend()
+    #     stock_data: pd.DataFrame = data_loader.get_data(data_formatter=data_formatter)
+    #     stock_data_list = stock_data["Value"].tolist()
+    #
+    #     pefm = PerformanceEvaluationForecastingModel(
+    #         HoltWintersForecast, data=stock_data_list
+    #     )
+    #     chart_data = pefm.get_chat_data()
+    #     print(default_data["ticker"])
+    #     pefm.show_criteria()
+    #
+    #     axs[i % 2][i // 2].set_title(default_data["ticker"])
+    #     axs[i % 2][i // 2].plot(chart_data[0], label="Прогноз")
+    #     axs[i % 2][i // 2].plot(chart_data[1], label="Исходные данные")
+    #     plt.legend()
     #
     # plt.show()

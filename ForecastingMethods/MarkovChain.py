@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 
 from ApproximateModels.StaticalModelUsingWalshFunc import StaticalModelUsingWalshFunc
 from ForecastingMethods.ForecastingModel import ForecastingModelInterface
+from Plot import Plot
+import matplotlib.pyplot as plt
 
 
 class MarkovChain(ForecastingModelInterface):
@@ -32,8 +34,10 @@ class MarkovChain(ForecastingModelInterface):
         self.fill_counts_transition_from_segment()
         self.fill_transition_probability_matrix()
 
+    def fit(self):
+        pass
+
     def calculate_walsh_levels(self):
-        # Если уровни одинаковые подряд ?????
         prev = -1
         for value in self.statical_model:
             if value != prev:
@@ -43,7 +47,9 @@ class MarkovChain(ForecastingModelInterface):
     def get_segment_number(self, value):
         """Returns the number of the segment in which the value is located"""
         number = 0
-        while number < len(self.inf_segment) and value > self.inf_segment[number]:
+        while (
+            number < len(self.inf_segment) - 1 and value > self.inf_segment[number + 1]
+        ):
             number += 1
 
         return min(number, self.num_of_segments - 1)
